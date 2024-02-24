@@ -4,8 +4,8 @@ const {promisify} = require("util")
 const User = require("../model/userSchema");
 
 const createToken = (payload) => {
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: 864000
+    const token = jwt.sign(payload, "mysecretjwt", {
+      expiresIn: 864000,
     });
     return token;
 }
@@ -71,7 +71,7 @@ const login = async (req, res) => {
 const authMiddleware = async (req, res, next) => {
     try {
         if(req.headers && req.headers.token){
-          const decoded =  await promisify(jwt.verify)(req.headers.token, process.env.JWT_SECRET);
+          const decoded =  await promisify(jwt.verify)(req.headers.token, "mysecretjwt");
           const user = await User.findOne({email: decoded.email}).select("-password");
           if(!user){
             return res.status(400).json({
